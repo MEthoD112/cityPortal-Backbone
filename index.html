@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityPortal</title>
+    <link rel="shortcut icon" href="img/favicon.jpg" type="image/x-icon">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/screen.css">
+</head>
+
+<body>
+    <button type="button" class="btn btn-info load-data btn-sm" id="load-data">Load test data</button>
+
+    <!-- Container for search, filter and buttons -->
+    <div id="wrapper" class="wrapper">
+        <div class="button-wrapper">
+            <div class="input-group" id="adv-search">
+                <input type="text" class="form-control" placeholder="Search for cities" list="cities-list" id="input-search-cities" />
+                <datalist id="cities-list">
+                </datalist>
+                <div class="input-group-btn">
+                    <div class="btn-group" role="group">
+                        <div class="dropdown dropdown-lg" id="dropdown-menu">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdown-button">
+                                <span class="caret"></span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label for="input-search-countries">Filter by countries</label>
+                                        <span id="countries-error" class="countries-error"></span>
+                                        <input type="text" class="form-control input-countries" placeholder="Search for countries" list="countries-list" id="input-search-countries"
+                                        />
+                                        <datalist id="countries-list">
+                                        </datalist>
+                                    </div>
+                                    <button id="search-country-button" type="button" class="btn btn-primary search-country">
+                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                    </button>
+                                    <hr>
+                                    <div class="form-group" id="filter-attributes">
+                                        <label>Filter by attributes</label>
+                                        <span id="atrributes-error" class="atrributes-error"></span>
+                                        <div class="wrapper-filter-attr">
+                                            <label for="i-filter" class="attrib">
+                                                Is Industrial
+                                                <input type="button" id="i-filter" value="I" class="i" data-act="true">
+                                            </label>
+                                        </div>
+                                        <div class="wrapper-filter-attr">
+                                            <label for="c-filter" class="attrib">
+                                                Is Criminal
+                                                <input type="button" id="c-filter" value="C" class="c" data-act="false">
+                                            </label>
+                                        </div>
+                                        <div class="wrapper-filter-attr">
+                                            <label for="p-filter" class="attrib">
+                                                Is Polluted
+                                                <input type="button" id="p-filter" value="P" class="p" data-act="false">
+                                            </label>
+                                        </div>
+                                        <button id="search-attributes-button" type="button" class="btn btn-primary search-attributes">
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                    <hr>
+                                    <div class="form-group">
+                                        <label class="filter-area-title">Filter areas by citizens</label>
+                                        <span id="citizens-error" class="citizens-error"></span>
+                                        <div></div>
+                                        <label class="citizen-input" for="min-value-citizens">
+                                            Minimal value:
+                                            <input id="min-value-citizens" class="form-control min-value" type="text" />
+                                        </label>
+                                        <label class="citizen-input" for="max-value-citizens">
+                                            Maximum value: 
+                                            <input id="max-value-citizens" class="form-control max-value" type="text" />
+                                        </label>
+                                        <button id="search-by-citizens" type="button" class="btn btn-primary citizen-filter-button">
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="search-button-cities">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary" id="reset-button-cities">
+                            <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="addcity btn btn-primary .btn-sm" data-toggle="modal" data-target="#myModal" id="add-new-city-button">
+                            Add New City
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cities"></div>
+    </div>
+
+    <!-- Modal for adding area -->
+    <div class="modal fade" id="areaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabelForEdit"></h4>
+                    <span id="area-error" class="city-error"></span>
+                </div>
+                <div class="modal-body">
+                    <div class="areainput">
+                        <label for="areaname" class="arealabel">
+                            Name: 
+                            <input type="text" id="areaname">
+                        </label>
+                    </div>
+                    <div class="areainput">
+                        <label for="areadescription">
+                            Description: 
+                            <input type="text" id="areadescription">
+                        </label>
+                    </div>
+                    <div class="areainput">
+                        <label for="areacitizens">
+                            Citizens: 
+                            <input type="text" id="areacitizens">
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="save-area">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for adding city -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                    <span id="city-error" class="city-error"></span>
+                </div>
+                <div class="modal-body" id="modal-city">
+                    <label for="addnewcity">
+                       City name: 
+                       <input type="text" id="addnewcity" class="addnewcity">
+                    </label>
+                    <label for="addnewcountry">
+                       Country name: 
+                       <input type="text" id="addnewcountry">
+                    </label>
+                    <div>
+                        <div>
+                            <label for="i">
+                                Is Industrial
+                                <input type="button" id="i" value="I" class="i" data-act="true">
+                            </label>
+                        </div>
+                        <div>
+                            <label for="c">
+                                Is Criminal
+                                <input type="button" id="c" value="C" class="c" data-act="false">
+                            </label>
+                        </div>
+                        <div>
+                            <label for="p">
+                                Is Polluted
+                                <input type="button" id="p" value="P" class="p" data-act="false">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save-new-city" data-dismiss="modal">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <script type="text/template" id="city-template">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="toggle-container" role="button" data-toggle="collapse" data-parent="#accordion" href=<%='#collapse' + id %>
+                    aria-expanded="false" aria-controls=
+                    <%= '#collapse' + id %>></div>
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <button class="delete-city" data-id=<%= id %>></button>
+                    <button class="edit-city" data-id=<%= id %> data-target="#myModal" data-toggle="modal"></button>
+                    <a>
+                        <%= name %>
+                    </a>
+                    <div class="areas"><span id=<%= id + 'areas' %> > <%= id %> </span></div>
+                    <div class="marks">
+                        <button id="i-button" data-id=<%= id %> class="attributes" <%= isIndustrial ? 'style="background:green"' : 'style="background:red"' %> >I</button>
+                        <button id="c-button" data-id=<%= id %> class="attributes" <%= isCriminal ? 'style="background:green"' : 'style="background:red"' %> >C</button>
+                        <button id="p-button" data-id=<%= id %> class="attributes" <%= isPolluted ? 'style="background:green"' : 'style="background:red"' %> >P</button>
+                    </div>
+                </div>
+                <div id=<%='collapse' + id %> class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="newarea">
+                            <button type="button" class="newareabutton btn btn-primary btn-sm" id="add-new-area" data-toggle="modal" data-target="#areaModal"
+                                data-id=<%= id %>>Add New Area</button>
+                        </div>
+                        <div id="areas"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/template" id="area-template">
+        <div class="areasdown">
+            <button class="delete-area"></button>
+            <button class="edit-area" data-target="#areaModal" data-toggle="modal"></button>
+            <span class="areadown-name"> <%= name %> </span>
+            <span class="description"> <%= description %> </span>
+            <span class="citizenamount"> <%= citizenAmount %> </span>
+        </div>
+    </script>
+</body>
+<script src="scripts/build.js"></script>
+
+</html>
