@@ -149,7 +149,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel"></h4>
+                    <h4 class="modal-title" id="myModalLabel">Add new city</h4>
                     <span id="city-error" class="city-error"></span>
                 </div>
                 <div class="modal-body" id="modal-city">
@@ -165,26 +165,26 @@
                         <div>
                             <label for="i">
                                 Is Industrial
-                                <input type="button" id="i" value="I" class="i" data-act="true">
+                                <input type="button" id="i" value="I" class="i" data-act="true" style="background:#4ee321">
                             </label>
                         </div>
                         <div>
                             <label for="c">
                                 Is Criminal
-                                <input type="button" id="c" value="C" class="c" data-act="false">
+                                <input type="button" id="c" value="C" class="c" data-act="false" style="background:#f39846">
                             </label>
                         </div>
                         <div>
                             <label for="p">
                                 Is Polluted
-                                <input type="button" id="p" value="P" class="p" data-act="false">
+                                <input type="button" id="p" value="P" class="p" data-act="false" style="background:#f39846">
                             </label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="save-new-city" data-dismiss="modal">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="save-new-city">Save changes</button>
                 </div>
             </div>
         </div>
@@ -216,7 +216,7 @@
                             <button type="button" class="newareabutton btn btn-primary btn-sm" id="add-new-area" data-toggle="modal" data-target="#areaModal"
                                 data-id=<%= id %>>Add New Area</button>
                         </div>
-                        <div id="areas"></div>
+                        <div id=<%= 'areas' + id %>></div>
                     </div>
                 </div>
             </div>
@@ -224,7 +224,7 @@
     </script>
     <script type="text/template" id="area-template">
         <div class="areasdown">
-            <button class="delete-area"></button>
+            <button class="delete-area" data-id=<%= id %>></button>
             <button class="edit-area" data-target="#areaModal" data-toggle="modal"></button>
             <span class="areadown-name"> <%= name %> </span>
             <span class="description"> <%= description %> </span>

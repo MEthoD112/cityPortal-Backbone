@@ -2,11 +2,12 @@ import $ from 'jquery';
 import { _ } from 'underscore';
 
 import { CityModel } from './citymodel';
-import { CityView } from './views';
-import { citiesCollection } from './collections';
+import { CityView } from './cityviews';
+import { citiesCollection } from './citycollections';
 import { AreasList } from './areacollection';
 import { AreaView } from './areaview';
 import { AreaModel } from './areamodel';
+import { constants } from './constants';
 
 const AppView = Backbone.View.extend({
 
@@ -14,41 +15,79 @@ const AppView = Backbone.View.extend({
 
   initialize: function () {
     var self = this;
-    this.input = this.$('#addnewcity');
+    this.inputCity = this.$('#addnewcity');
     this.inputArea = this.$('#areaname');
+    this.inputCountry = this.$('#addnewcountry');
+    this.inputDescription = this.$('#areadescription');
+    this.inputCitizenAmount = this.$('#areacitizens');
 
     citiesCollection.on('add', this.addAll, this);
-    //citiesCollection.on('change', this.addAll, this);
     citiesCollection.on('reset', this.addAll, this);
-    citiesCollection.on('cityAreas:change', function() { 
-        console.log('Change event on area');
-        console.log(citiesCollection.toJSON());
-    });
+    //citiesCollection.on('cityAreas:destroy', function() { 
+    //    console.log('Change event on area');
+    //});
     citiesCollection.fetch();
   },
 
   events: {
-    'click #save-new-city': 'createCityModel',
-    'click #add-new-area': 'getCityModel',
-    'click #save-area': 'createArea'
+    'click #save-new-city': 'createCity',
+    'click #add-new-area': 'getIdCityModel',
+    'click #save-area': 'createArea',
+    'click .delete-area': 'deleteArea'
   },
 
-  getCityModel: function(event) {
+  getIdCityModel: function (event) {
     this.id = event.target.getAttribute('data-id');
   },
 
-  createArea: function() {
-    citiesCollection.get(this.id).attributes.cityAreas.create(this.createNewArea());
-    const view = new AreaView({model:this.createNewArea()});
-    $('#areas').append(view.render().el);
+  deleteArea: function (event) {
+    this.areaId = event.target.getAttribute('data-id');
+    const cityParent = event.target.parentNode.parentNode.parentNode;
+    const view = $(event.target).parent();
+    this.cityId = cityParent.getAttribute('id').slice(5);
+    citiesCollection.get(this.cityId).get('cityAreas').get(this.areaId).destroy();
+    citiesCollection.get(this.cityId).save();
+    view.remove();
   },
 
-  createCityModel: function () {
-    if (!this.input.val().trim()) {
+  createArea: function () {
+    const model = this.createNewArea();
+    citiesCollection.get(this.id).get('cityAreas').create(model);
+    citiesCollection.get(this.id).save();
+    const view = new AreaView({ model: model });
+    const id = '#areas' + this.id;
+    $(id).append(view.render().el);
+  },
+
+  addOneArea: function (area, id) {
+    const view = new AreaView({ model: area });
+    const Id = '#areas' + id;
+    $(Id).append(view.render().el);
+  },
+
+  createCity: function () {
+    if (!this.inputCity.val().trim()) {
+      $('#city-error').html(constants.alertMessageForCity);
       return;
     }
-    citiesCollection.create(this.newAttributes(),{parse: true});
-    this.input.val(''); // clean input box
+    const bool = citiesCollection.toJSON().every((item) => {
+      return item.name.toUpperCase() !== this.inputCity.val().toUpperCase();
+    });
+
+    if (!bool) {
+      $('#city-error').html(constants.alertMessageForExistingCity);
+      return;
+    }
+    if (!this.inputCountry.val().trim()) {
+      $('#city-error').html(constants.alertMessageForCountry);
+      return;
+    }
+
+    $('#myModal').modal('hide')
+    citiesCollection.create(this.createNewCity(), { parse: true });
+    this.inputCity.val('');
+    this.inputCountry.val('');
+    $('#city-error').html('');
   },
 
   addOne: function (city) {
@@ -59,24 +98,26 @@ const AppView = Backbone.View.extend({
   addAll: function () {
     this.$('#cities').html(''); // clean the todo list
     citiesCollection.each(this.addOne, this);
-  },
-
-  newAttributes: function () {
-    return {
-      name: this.input.val().trim(),
-      country: 'Some country',
-      isIndustrial: true,
-      isCriminal: false,
-      isPolluted: false
-    } 
-  },
-
-  createNewArea: function() {
-    return {
-      name: this.inputArea.val().trim(),
-      description: 'I am area',
-      citizenAmount: 1
+    for (let i = 0; i < citiesCollection.models.length; i++) {
+      for (let j = 0; j < citiesCollection.models[i].get('cityAreas').models.length; j++) {
+        this.addOneArea(citiesCollection.models[i].get('cityAreas').models[j], citiesCollection.models[i].attributes.id);
+      }
     }
+  },
+
+  createNewCity: function () {
+    return new CityModel({
+      name: this.inputCity.val().trim(),
+      country: this.inputCountry.val().trim()
+    });
+  },
+
+  createNewArea: function () {
+    return new AreaModel({
+      name: this.inputArea.val().trim(),
+      description: this.inputDescription.val().trim(),
+      citizenAmount: this.inputCitizenAmount.val().trim()
+    })
   }
 
 });

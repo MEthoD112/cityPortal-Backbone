@@ -1,6 +1,7 @@
 import { CityModel } from './citymodel';
 import LocalStorage from 'backbone.localstorage';
 
+
 const CitiesList = Backbone.Collection.extend({
 
     model: CityModel,

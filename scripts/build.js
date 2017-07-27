@@ -601,7 +601,7 @@ if(__webpack_require__(6)){
     , createArrayIncludes = __webpack_require__(50)
     , speciesConstructor  = __webpack_require__(78)
     , ArrayIterators      = __webpack_require__(87)
-    , Iterators           = __webpack_require__(42)
+    , Iterators           = __webpack_require__(43)
     , $iterDetect         = __webpack_require__(56)
     , setSpecies          = __webpack_require__(37)
     , arrayFill           = __webpack_require__(62)
@@ -1270,101 +1270,6 @@ module.exports = function(key){
 
 /***/ }),
 /* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 22.1.3.31 Array.prototype[@@unscopables]
-var UNSCOPABLES = __webpack_require__(5)('unscopables')
-  , ArrayProto  = Array.prototype;
-if(ArrayProto[UNSCOPABLES] == undefined)__webpack_require__(12)(ArrayProto, UNSCOPABLES, {});
-module.exports = function(key){
-  ArrayProto[UNSCOPABLES][key] = true;
-};
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var ctx         = __webpack_require__(25)
-  , call        = __webpack_require__(103)
-  , isArrayIter = __webpack_require__(69)
-  , anObject    = __webpack_require__(1)
-  , toLength    = __webpack_require__(8)
-  , getIterFn   = __webpack_require__(86)
-  , BREAK       = {}
-  , RETURN      = {};
-var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
-  var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
-    , f      = ctx(fn, that, entries ? 2 : 1)
-    , index  = 0
-    , length, step, iterator, result;
-  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
-  // fast case for arrays with default iterator
-  if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
-    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
-    if(result === BREAK || result === RETURN)return result;
-  } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
-    result = call(iterator, f, step.value, entries);
-    if(result === BREAK || result === RETURN)return result;
-  }
-};
-exports.BREAK  = BREAK;
-exports.RETURN = RETURN;
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports) {
-
-module.exports = {};
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var def = __webpack_require__(7).f
-  , has = __webpack_require__(10)
-  , TAG = __webpack_require__(5)('toStringTag');
-
-module.exports = function(it, tag, stat){
-  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
-};
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var $export = __webpack_require__(0)
-  , defined = __webpack_require__(19)
-  , fails   = __webpack_require__(3)
-  , spaces  = __webpack_require__(82)
-  , space   = '[' + spaces + ']'
-  , non     = '\u200b\u0085'
-  , ltrim   = RegExp('^' + space + space + '*')
-  , rtrim   = RegExp(space + space + '*$');
-
-var exporter = function(KEY, exec, ALIAS){
-  var exp   = {};
-  var FORCE = fails(function(){
-    return !!spaces[KEY]() || non[KEY]() != non;
-  });
-  var fn = exp[KEY] = FORCE ? exec(trim) : spaces[KEY];
-  if(ALIAS)exp[ALIAS] = fn;
-  $export($export.P + $export.F * FORCE, 'String', exp);
-};
-
-// 1 -> String#trimLeft
-// 2 -> String#trimRight
-// 3 -> String#trim
-var trim = exporter.trim = function(string, TYPE){
-  string = String(defined(string));
-  if(TYPE & 1)string = string.replace(ltrim, '');
-  if(TYPE & 2)string = string.replace(rtrim, '');
-  return string;
-};
-
-module.exports = exporter;
-
-/***/ }),
-/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
@@ -2917,6 +2822,101 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscor
   }
 }.call(this));
 
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 22.1.3.31 Array.prototype[@@unscopables]
+var UNSCOPABLES = __webpack_require__(5)('unscopables')
+  , ArrayProto  = Array.prototype;
+if(ArrayProto[UNSCOPABLES] == undefined)__webpack_require__(12)(ArrayProto, UNSCOPABLES, {});
+module.exports = function(key){
+  ArrayProto[UNSCOPABLES][key] = true;
+};
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var ctx         = __webpack_require__(25)
+  , call        = __webpack_require__(103)
+  , isArrayIter = __webpack_require__(69)
+  , anObject    = __webpack_require__(1)
+  , toLength    = __webpack_require__(8)
+  , getIterFn   = __webpack_require__(86)
+  , BREAK       = {}
+  , RETURN      = {};
+var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
+  var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
+    , f      = ctx(fn, that, entries ? 2 : 1)
+    , index  = 0
+    , length, step, iterator, result;
+  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
+  // fast case for arrays with default iterator
+  if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
+    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+    if(result === BREAK || result === RETURN)return result;
+  } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
+    result = call(iterator, f, step.value, entries);
+    if(result === BREAK || result === RETURN)return result;
+  }
+};
+exports.BREAK  = BREAK;
+exports.RETURN = RETURN;
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports) {
+
+module.exports = {};
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var def = __webpack_require__(7).f
+  , has = __webpack_require__(10)
+  , TAG = __webpack_require__(5)('toStringTag');
+
+module.exports = function(it, tag, stat){
+  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+};
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $export = __webpack_require__(0)
+  , defined = __webpack_require__(19)
+  , fails   = __webpack_require__(3)
+  , spaces  = __webpack_require__(82)
+  , space   = '[' + spaces + ']'
+  , non     = '\u200b\u0085'
+  , ltrim   = RegExp('^' + space + space + '*')
+  , rtrim   = RegExp(space + space + '*$');
+
+var exporter = function(KEY, exec, ALIAS){
+  var exp   = {};
+  var FORCE = fails(function(){
+    return !!spaces[KEY]() || non[KEY]() != non;
+  });
+  var fn = exp[KEY] = FORCE ? exec(trim) : spaces[KEY];
+  if(ALIAS)exp[ALIAS] = fn;
+  $export($export.P + $export.F * FORCE, 'String', exp);
+};
+
+// 1 -> String#trimLeft
+// 2 -> String#trimRight
+// 3 -> String#trim
+var trim = exporter.trim = function(string, TYPE){
+  string = String(defined(string));
+  if(TYPE & 1)string = string.replace(ltrim, '');
+  if(TYPE & 2)string = string.replace(rtrim, '');
+  return string;
+};
+
+module.exports = exporter;
 
 /***/ }),
 /* 46 */
@@ -13259,12 +13259,12 @@ var global            = __webpack_require__(2)
   , redefine          = __webpack_require__(13)
   , redefineAll       = __webpack_require__(36)
   , meta              = __webpack_require__(28)
-  , forOf             = __webpack_require__(41)
+  , forOf             = __webpack_require__(42)
   , anInstance        = __webpack_require__(31)
   , isObject          = __webpack_require__(4)
   , fails             = __webpack_require__(3)
   , $iterDetect       = __webpack_require__(56)
-  , setToStringTag    = __webpack_require__(43)
+  , setToStringTag    = __webpack_require__(44)
   , inheritIfRequired = __webpack_require__(68);
 
 module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
@@ -13636,7 +13636,7 @@ module.exports = function(that, target, C){
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
-var Iterators  = __webpack_require__(42)
+var Iterators  = __webpack_require__(43)
   , ITERATOR   = __webpack_require__(5)('iterator')
   , ArrayProto = Array.prototype;
 
@@ -13662,7 +13662,7 @@ module.exports = Array.isArray || function isArray(arg){
 
 var create         = __webpack_require__(33)
   , descriptor     = __webpack_require__(29)
-  , setToStringTag = __webpack_require__(43)
+  , setToStringTag = __webpack_require__(44)
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
@@ -13684,9 +13684,9 @@ var LIBRARY        = __webpack_require__(32)
   , redefine       = __webpack_require__(13)
   , hide           = __webpack_require__(12)
   , has            = __webpack_require__(10)
-  , Iterators      = __webpack_require__(42)
+  , Iterators      = __webpack_require__(43)
   , $iterCreate    = __webpack_require__(71)
-  , setToStringTag = __webpack_require__(43)
+  , setToStringTag = __webpack_require__(44)
   , getPrototypeOf = __webpack_require__(17)
   , ITERATOR       = __webpack_require__(5)('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
@@ -14058,7 +14058,7 @@ var global         = __webpack_require__(2)
   , gOPN           = __webpack_require__(34).f
   , dP             = __webpack_require__(7).f
   , arrayFill      = __webpack_require__(62)
-  , setToStringTag = __webpack_require__(43)
+  , setToStringTag = __webpack_require__(44)
   , ARRAY_BUFFER   = 'ArrayBuffer'
   , DATA_VIEW      = 'DataView'
   , PROTOTYPE      = 'prototype'
@@ -14338,7 +14338,7 @@ module.exports = function(name){
 
 var classof   = __webpack_require__(46)
   , ITERATOR  = __webpack_require__(5)('iterator')
-  , Iterators = __webpack_require__(42);
+  , Iterators = __webpack_require__(43);
 module.exports = __webpack_require__(24).getIteratorMethod = function(it){
   if(it != undefined)return it[ITERATOR]
     || it['@@iterator']
@@ -14351,9 +14351,9 @@ module.exports = __webpack_require__(24).getIteratorMethod = function(it){
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(40)
+var addToUnscopables = __webpack_require__(41)
   , step             = __webpack_require__(104)
-  , Iterators        = __webpack_require__(42)
+  , Iterators        = __webpack_require__(43)
   , toIObject        = __webpack_require__(15);
 
 // 22.1.3.4 Array.prototype.entries()
@@ -14411,7 +14411,7 @@ var AreasList = Backbone.Collection.extend({
 
     localStorage: new Backbone.LocalStorage("areas")
 });
-//import { _ } from 'underscore';
+
 exports.AreasList = AreasList;
 
 /***/ }),
@@ -14424,24 +14424,19 @@ exports.AreasList = AreasList;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.AreaModel = undefined;
+
+var _underscore = __webpack_require__(40);
+
 var AreaModel = Backbone.Model.extend({
 
     defaults: function defaults() {
         return {
+            id: _underscore._.uniqueId(),
             name: "Some Area",
             description: 'Some description',
             citizenAmount: 1
         };
-    },
-
-    initialize: function initialize() {
-        if (!this.get("name")) {
-            this.set({ "name": this.defaults.name });
-        }
-    },
-
-    clear: function clear() {
-        this.destroy();
     }
 });
 
@@ -14461,6 +14456,8 @@ exports.CityModel = undefined;
 
 var _areacollection = __webpack_require__(88);
 
+var _underscore = __webpack_require__(40);
+
 var CityModel = Backbone.Model.extend({
 
     defaults: function defaults() {
@@ -14475,8 +14472,18 @@ var CityModel = Backbone.Model.extend({
     },
 
     initialize: function initialize() {
-        this.set('cityAreas', new _areacollection.AreasList());
+        _underscore._.defaults(this.attributes, {
+            cityAreas: new _areacollection.AreasList()
+        });
         this.get('cityAreas').on('change', this.cityAreasChange, this);
+    },
+
+    parse: function parse(response) {
+        if (_underscore._.has(response, "cityAreas")) {
+            this.attributes.cityAreas = new _areacollection.AreasList(response.cityAreas, { parse: true });
+            delete response.cityAreas;
+        }
+        return response;
     },
 
     cityAreasChange: function cityAreasChange(model) {
@@ -14508,7 +14515,7 @@ exports.CityModel = CityModel;
 
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(45), __webpack_require__(92));
+		module.exports = factory(__webpack_require__(40), __webpack_require__(92));
 	else if(typeof define === 'function' && define.amd)
 		define([, ], factory);
 	else if(typeof exports === 'object')
@@ -15102,7 +15109,7 @@ module.exports = __webpack_require__(3);
 
   // Set up Backbone appropriately for the environment. Start with AMD.
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(45), __webpack_require__(49), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(40), __webpack_require__(49), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
       // Export global even in AMD case in case this script is loaded with
       // others that may still expect a global Backbone.
       root.Backbone = factory(root, exports, _, $);
@@ -17056,7 +17063,7 @@ module.exports = [].copyWithin || function copyWithin(target/*= 0*/, start/*= 0,
 /* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var forOf = __webpack_require__(41);
+var forOf = __webpack_require__(42);
 
 module.exports = function(iter, ITERATOR){
   var result = [];
@@ -17140,7 +17147,7 @@ var dP          = __webpack_require__(7).f
   , ctx         = __webpack_require__(25)
   , anInstance  = __webpack_require__(31)
   , defined     = __webpack_require__(19)
-  , forOf       = __webpack_require__(41)
+  , forOf       = __webpack_require__(42)
   , $iterDefine = __webpack_require__(72)
   , step        = __webpack_require__(104)
   , setSpecies  = __webpack_require__(37)
@@ -17301,7 +17308,7 @@ var redefineAll       = __webpack_require__(36)
   , anObject          = __webpack_require__(1)
   , isObject          = __webpack_require__(4)
   , anInstance        = __webpack_require__(31)
-  , forOf             = __webpack_require__(41)
+  , forOf             = __webpack_require__(42)
   , createArrayMethod = __webpack_require__(21)
   , $has              = __webpack_require__(10)
   , arrayFind         = createArrayMethod(5)
@@ -17577,7 +17584,7 @@ module.exports = Reflect && Reflect.ownKeys || function ownKeys(it){
 /***/ (function(module, exports, __webpack_require__) {
 
 var $parseFloat = __webpack_require__(2).parseFloat
-  , $trim       = __webpack_require__(44).trim;
+  , $trim       = __webpack_require__(45).trim;
 
 module.exports = 1 / $parseFloat(__webpack_require__(82) + '-0') !== -Infinity ? function parseFloat(str){
   var string = $trim(String(str), 3)
@@ -17590,7 +17597,7 @@ module.exports = 1 / $parseFloat(__webpack_require__(82) + '-0') !== -Infinity ?
 /***/ (function(module, exports, __webpack_require__) {
 
 var $parseInt = __webpack_require__(2).parseInt
-  , $trim     = __webpack_require__(44).trim
+  , $trim     = __webpack_require__(45).trim
   , ws        = __webpack_require__(82)
   , hex       = /^[\-+]?0[xX]/;
 
@@ -17760,11 +17767,13 @@ var _jquery = __webpack_require__(49);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _underscore = __webpack_require__(45);
+var _underscore = __webpack_require__(40);
 
 var _backbone = __webpack_require__(92);
 
 var _application = __webpack_require__(123);
+
+var _toggleattrinmodal = __webpack_require__(326);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17775,6 +17784,7 @@ var Bootstrap = __webpack_require__(127);
 
 
 var app = new _application.AppView();
+var toggleModal = new _toggleattrinmodal.ToggleAttrModal();
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
 
 /***/ }),
@@ -17828,19 +17838,21 @@ var _jquery = __webpack_require__(49);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _underscore = __webpack_require__(45);
+var _underscore = __webpack_require__(40);
 
 var _citymodel = __webpack_require__(90);
 
-var _views = __webpack_require__(126);
+var _cityviews = __webpack_require__(324);
 
-var _collections = __webpack_require__(125);
+var _citycollections = __webpack_require__(323);
 
 var _areacollection = __webpack_require__(88);
 
 var _areaview = __webpack_require__(124);
 
 var _areamodel = __webpack_require__(89);
+
+var _constants = __webpack_require__(325);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17850,69 +17862,111 @@ var AppView = Backbone.View.extend({
 
   initialize: function initialize() {
     var self = this;
-    this.input = this.$('#addnewcity');
+    this.inputCity = this.$('#addnewcity');
     this.inputArea = this.$('#areaname');
+    this.inputCountry = this.$('#addnewcountry');
+    this.inputDescription = this.$('#areadescription');
+    this.inputCitizenAmount = this.$('#areacitizens');
 
-    _collections.citiesCollection.on('add', this.addAll, this);
-    //citiesCollection.on('change', this.addAll, this);
-    _collections.citiesCollection.on('reset', this.addAll, this);
-    _collections.citiesCollection.on('cityAreas:change', function () {
-      console.log('Change event on area');
-      console.log(_collections.citiesCollection.toJSON());
-    });
-    _collections.citiesCollection.fetch();
+    _citycollections.citiesCollection.on('add', this.addAll, this);
+    _citycollections.citiesCollection.on('reset', this.addAll, this);
+    //citiesCollection.on('cityAreas:destroy', function() { 
+    //    console.log('Change event on area');
+    //});
+    _citycollections.citiesCollection.fetch();
   },
 
   events: {
-    'click #save-new-city': 'createCityModel',
-    'click #add-new-area': 'getCityModel',
-    'click #save-area': 'createArea'
+    'click #save-new-city': 'createCity',
+    'click #add-new-area': 'getIdCityModel',
+    'click #save-area': 'createArea',
+    'click .delete-area': 'deleteArea'
   },
 
-  getCityModel: function getCityModel(event) {
+  getIdCityModel: function getIdCityModel(event) {
     this.id = event.target.getAttribute('data-id');
   },
 
-  createArea: function createArea() {
-    _collections.citiesCollection.get(this.id).attributes.cityAreas.create(this.createNewArea());
-    var view = new _areaview.AreaView({ model: this.createNewArea() });
-    (0, _jquery2.default)('#areas').append(view.render().el);
+  deleteArea: function deleteArea(event) {
+    this.areaId = event.target.getAttribute('data-id');
+    var cityParent = event.target.parentNode.parentNode.parentNode;
+    var view = (0, _jquery2.default)(event.target).parent();
+    this.cityId = cityParent.getAttribute('id').slice(5);
+    _citycollections.citiesCollection.get(this.cityId).get('cityAreas').get(this.areaId).destroy();
+    _citycollections.citiesCollection.get(this.cityId).save();
+    view.remove();
   },
 
-  createCityModel: function createCityModel() {
-    if (!this.input.val().trim()) {
+  createArea: function createArea() {
+    var model = this.createNewArea();
+    _citycollections.citiesCollection.get(this.id).get('cityAreas').create(model);
+    _citycollections.citiesCollection.get(this.id).save();
+    var view = new _areaview.AreaView({ model: model });
+    var id = '#areas' + this.id;
+    (0, _jquery2.default)(id).append(view.render().el);
+  },
+
+  addOneArea: function addOneArea(area, id) {
+    var view = new _areaview.AreaView({ model: area });
+    var Id = '#areas' + id;
+    (0, _jquery2.default)(Id).append(view.render().el);
+  },
+
+  createCity: function createCity() {
+    var _this = this;
+
+    if (!this.inputCity.val().trim()) {
+      (0, _jquery2.default)('#city-error').html(_constants.constants.alertMessageForCity);
       return;
     }
-    _collections.citiesCollection.create(this.newAttributes(), { parse: true });
-    this.input.val(''); // clean input box
+    var bool = _citycollections.citiesCollection.toJSON().every(function (item) {
+      return item.name.toUpperCase() !== _this.inputCity.val().toUpperCase();
+    });
+
+    if (!bool) {
+      (0, _jquery2.default)('#city-error').html(_constants.constants.alertMessageForExistingCity);
+      return;
+    }
+    if (!this.inputCountry.val().trim()) {
+      (0, _jquery2.default)('#city-error').html(_constants.constants.alertMessageForCountry);
+      return;
+    }
+
+    (0, _jquery2.default)('#myModal').modal('hide');
+    _citycollections.citiesCollection.create(this.createNewCity(), { parse: true });
+    this.inputCity.val('');
+    this.inputCountry.val('');
+    (0, _jquery2.default)('#city-error').html('');
   },
 
   addOne: function addOne(city) {
-    var view = new _views.CityView({ model: city });
+    var view = new _cityviews.CityView({ model: city });
     (0, _jquery2.default)('#cities').append(view.render().el);
   },
 
   addAll: function addAll() {
     this.$('#cities').html(''); // clean the todo list
-    _collections.citiesCollection.each(this.addOne, this);
+    _citycollections.citiesCollection.each(this.addOne, this);
+    for (var i = 0; i < _citycollections.citiesCollection.models.length; i++) {
+      for (var j = 0; j < _citycollections.citiesCollection.models[i].get('cityAreas').models.length; j++) {
+        this.addOneArea(_citycollections.citiesCollection.models[i].get('cityAreas').models[j], _citycollections.citiesCollection.models[i].attributes.id);
+      }
+    }
   },
 
-  newAttributes: function newAttributes() {
-    return {
-      name: this.input.val().trim(),
-      country: 'Some country',
-      isIndustrial: true,
-      isCriminal: false,
-      isPolluted: false
-    };
+  createNewCity: function createNewCity() {
+    return new _citymodel.CityModel({
+      name: this.inputCity.val().trim(),
+      country: this.inputCountry.val().trim()
+    });
   },
 
   createNewArea: function createNewArea() {
-    return {
+    return new _areamodel.AreaModel({
       name: this.inputArea.val().trim(),
-      description: 'I am area',
-      citizenAmount: 1
-    };
+      description: this.inputDescription.val().trim(),
+      citizenAmount: this.inputCitizenAmount.val().trim()
+    });
   }
 
 });
@@ -17931,11 +17985,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.AreaView = undefined;
 
-var _underscore = __webpack_require__(45);
-
 var _jquery = __webpack_require__(49);
 
 var _jquery2 = _interopRequireDefault(_jquery);
+
+var _underscore = __webpack_require__(40);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17947,17 +18001,12 @@ var AreaView = Backbone.View.extend({
 
   initialize: function initialize() {
     this.model.on('change', this.render, this);
-    this.model.on('destroy', this.remove, this); // remove: Convenience Backbone's function for removing the view from the DOM.
+    this.model.on('destroy', this.remove, this);
   },
 
   render: function render() {
-    console.log('render');
     this.$el.html(this.template(this.model.toJSON()));
     return this;
-  },
-
-  clear: function clear() {
-    this.model.clear();
   }
 
 });
@@ -17965,99 +18014,8 @@ var AreaView = Backbone.View.extend({
 exports.AreaView = AreaView;
 
 /***/ }),
-/* 125 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.citiesCollection = undefined;
-
-var _citymodel = __webpack_require__(90);
-
-var _backbone = __webpack_require__(91);
-
-var _backbone2 = _interopRequireDefault(_backbone);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var CitiesList = Backbone.Collection.extend({
-
-    model: _citymodel.CityModel,
-
-    localStorage: new Backbone.LocalStorage("cities")
-});
-
-var citiesCollection = new CitiesList();
-
-exports.citiesCollection = citiesCollection;
-
-/***/ }),
-/* 126 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CityView = undefined;
-
-var _underscore = __webpack_require__(45);
-
-var _jquery = __webpack_require__(49);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var CityView = Backbone.View.extend({
-
-  tagName: 'div',
-
-  template: _underscore._.template((0, _jquery2.default)('#city-template').html()),
-
-  initialize: function initialize() {
-    this.model.on('change', this.render, this);
-    this.model.on('destroy', this.remove, this);
-  },
-
-  render: function render() {
-    this.$el.html(this.template(this.model.toJSON()));
-    return this;
-  },
-
-  events: {
-    "click #i-button": "toggleIndustrial",
-    "click #c-button": "toggleCriminal",
-    "click #p-button": "togglePolluted",
-    "click .delete-city": "delete"
-  },
-
-  toggleIndustrial: function toggleIndustrial() {
-    this.model.toggleIndustrial();
-  },
-
-  toggleCriminal: function toggleCriminal() {
-    this.model.toggleCriminal();
-  },
-
-  togglePolluted: function togglePolluted() {
-    this.model.togglePolluted();
-  },
-
-  delete: function _delete() {
-    this.model.clear();
-  }
-});
-
-exports.CityView = CityView;
-
-/***/ }),
+/* 125 */,
+/* 126 */,
 /* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20652,7 +20610,7 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', {copyWithin: __webpack_require__(94)});
 
-__webpack_require__(40)('copyWithin');
+__webpack_require__(41)('copyWithin');
 
 /***/ }),
 /* 151 */
@@ -20679,7 +20637,7 @@ var $export = __webpack_require__(0);
 
 $export($export.P, 'Array', {fill: __webpack_require__(62)});
 
-__webpack_require__(40)('fill');
+__webpack_require__(41)('fill');
 
 /***/ }),
 /* 153 */
@@ -20715,7 +20673,7 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(40)(KEY);
+__webpack_require__(41)(KEY);
 
 /***/ }),
 /* 155 */
@@ -20735,7 +20693,7 @@ $export($export.P + $export.F * forced, 'Array', {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-__webpack_require__(40)(KEY);
+__webpack_require__(41)(KEY);
 
 /***/ }),
 /* 156 */
@@ -21474,7 +21432,7 @@ var global            = __webpack_require__(2)
   , gOPN              = __webpack_require__(34).f
   , gOPD              = __webpack_require__(16).f
   , dP                = __webpack_require__(7).f
-  , $trim             = __webpack_require__(44).trim
+  , $trim             = __webpack_require__(45).trim
   , NUMBER            = 'Number'
   , $Number           = global[NUMBER]
   , Base              = $Number
@@ -22002,7 +21960,7 @@ var LIBRARY            = __webpack_require__(32)
   , isObject           = __webpack_require__(4)
   , aFunction          = __webpack_require__(11)
   , anInstance         = __webpack_require__(31)
-  , forOf              = __webpack_require__(41)
+  , forOf              = __webpack_require__(42)
   , speciesConstructor = __webpack_require__(78)
   , task               = __webpack_require__(83).set
   , microtask          = __webpack_require__(75)()
@@ -22223,7 +22181,7 @@ if(!USE_NATIVE){
 }
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
-__webpack_require__(43)($Promise, PROMISE);
+__webpack_require__(44)($Promise, PROMISE);
 __webpack_require__(37)(PROMISE);
 Wrapper = __webpack_require__(24)[PROMISE];
 
@@ -23157,7 +23115,7 @@ __webpack_require__(14)('sup', function(createHTML){
 "use strict";
 
 // 21.1.3.25 String.prototype.trim()
-__webpack_require__(44)('trim', function($trim){
+__webpack_require__(45)('trim', function($trim){
   return function trim(){
     return $trim(this, 3);
   };
@@ -23178,7 +23136,7 @@ var global         = __webpack_require__(2)
   , META           = __webpack_require__(28).KEY
   , $fails         = __webpack_require__(3)
   , shared         = __webpack_require__(59)
-  , setToStringTag = __webpack_require__(43)
+  , setToStringTag = __webpack_require__(44)
   , uid            = __webpack_require__(39)
   , wks            = __webpack_require__(5)
   , wksExt         = __webpack_require__(116)
@@ -23589,7 +23547,7 @@ $export($export.P, 'Array', {
   }
 });
 
-__webpack_require__(40)('includes');
+__webpack_require__(41)('includes');
 
 /***/ }),
 /* 283 */
@@ -23858,7 +23816,7 @@ var $export     = __webpack_require__(0)
   , anInstance  = __webpack_require__(31)
   , redefineAll = __webpack_require__(36)
   , hide        = __webpack_require__(12)
-  , forOf       = __webpack_require__(41)
+  , forOf       = __webpack_require__(42)
   , RETURN      = forOf.RETURN;
 
 var getMethod = function(fn){
@@ -24307,7 +24265,7 @@ $export($export.P, 'String', {
 "use strict";
 
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-__webpack_require__(44)('trimLeft', function($trim){
+__webpack_require__(45)('trimLeft', function($trim){
   return function trimLeft(){
     return $trim(this, 1);
   };
@@ -24320,7 +24278,7 @@ __webpack_require__(44)('trimLeft', function($trim){
 "use strict";
 
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-__webpack_require__(44)('trimRight', function($trim){
+__webpack_require__(45)('trimRight', function($trim){
   return function trimRight(){
     return $trim(this, 2);
   };
@@ -24355,7 +24313,7 @@ var $iterators    = __webpack_require__(87)
   , redefine      = __webpack_require__(13)
   , global        = __webpack_require__(2)
   , hide          = __webpack_require__(12)
-  , Iterators     = __webpack_require__(42)
+  , Iterators     = __webpack_require__(43)
   , wks           = __webpack_require__(5)
   , ITERATOR      = wks('iterator')
   , TO_STRING_TAG = wks('toStringTag')
@@ -25341,6 +25299,187 @@ module.exports = __webpack_require__(24);
 __webpack_require__(122);
 module.exports = __webpack_require__(121);
 
+
+/***/ }),
+/* 323 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.citiesCollection = undefined;
+
+var _citymodel = __webpack_require__(90);
+
+var _backbone = __webpack_require__(91);
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CitiesList = Backbone.Collection.extend({
+
+    model: _citymodel.CityModel,
+
+    localStorage: new Backbone.LocalStorage("cities")
+});
+
+var citiesCollection = new CitiesList();
+
+exports.citiesCollection = citiesCollection;
+
+/***/ }),
+/* 324 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CityView = undefined;
+
+var _underscore = __webpack_require__(40);
+
+var _jquery = __webpack_require__(49);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CityView = Backbone.View.extend({
+
+  tagName: 'div',
+
+  template: _underscore._.template((0, _jquery2.default)('#city-template').html()),
+
+  initialize: function initialize() {
+    this.model.on('change', this.render, this);
+    this.model.on('destroy', this.remove, this);
+  },
+
+  render: function render() {
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
+  },
+
+  events: {
+    "click #i-button": "toggleIndustrial",
+    "click #c-button": "toggleCriminal",
+    "click #p-button": "togglePolluted",
+    "click .delete-city": "delete"
+  },
+
+  toggleIndustrial: function toggleIndustrial() {
+    this.model.toggleIndustrial();
+  },
+
+  toggleCriminal: function toggleCriminal() {
+    this.model.toggleCriminal();
+  },
+
+  togglePolluted: function togglePolluted() {
+    this.model.togglePolluted();
+  },
+
+  delete: function _delete() {
+    this.model.clear();
+  }
+});
+
+exports.CityView = CityView;
+
+/***/ }),
+/* 325 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var constants = {
+    activeColor: '#4ee321',
+    noActiveColor: '#f39846',
+    addCity: 'Add New City',
+    editCity: 'Edit City',
+    addArea: 'Add New Area',
+    editArea: 'Edit Area',
+    noAreas: 'No Areas',
+    alertMessageForCity: 'Please, insert the name of the city!!!',
+    alertMessageForCountry: 'Please, insert the name of the country',
+    alertMessageForExistingCity: 'Such city is already exist!!!',
+    alertMessageForExistingArea: 'Such area is already exist in this city!!!',
+    maxLengthForCityName: 100,
+    alertMessageForAreaFields: 'Please, insert all fields!!!',
+    alertMessageForAreaCitizens: 'Please, insert correct number of citizens!!!',
+    alertNoCities: 'No such city in database, use dropdown menu!!!',
+    alertNoCountries: 'No such country in database, use dropdown menu!!!',
+    alertNoCitiesWithAttr: 'No cities with such attributes!!!',
+    alertNoAreasWithSuchCitizens: 'No areas with such number of citizens!!!',
+    alertForAreaFilter: 'Insert correct number of citizens!!!'
+};
+
+exports.constants = constants;
+
+/***/ }),
+/* 326 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ToggleAttrModal = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(49);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _constants = __webpack_require__(325);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ToggleAttrModal = exports.ToggleAttrModal = function () {
+    function ToggleAttrModal() {
+        var _this = this;
+
+        _classCallCheck(this, ToggleAttrModal);
+
+        (0, _jquery2.default)('#modal-city').on('click', function (event) {
+            var id = event.target.id;
+            if (id === 'c' || id === 'p' || id === 'i') {
+                _this.toogleColor(event.target);
+            }
+        });
+    }
+
+    _createClass(ToggleAttrModal, [{
+        key: 'toogleColor',
+        value: function toogleColor(target) {
+            if (target.getAttribute('data-act') === 'true') {
+                target.style.background = _constants.constants.noActiveColor;
+                target.setAttribute('data-act', 'false');
+            } else {
+                target.style.background = _constants.constants.activeColor;
+                target.setAttribute('data-act', 'true');
+            }
+        }
+    }]);
+
+    return ToggleAttrModal;
+}();
 
 /***/ })
 /******/ ]);

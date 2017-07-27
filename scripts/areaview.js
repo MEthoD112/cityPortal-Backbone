@@ -1,5 +1,6 @@
-import { _ } from 'underscore';
+
 import $ from 'jquery';
+import { _ } from 'underscore';
 
 const AreaView = Backbone.View.extend({
 
@@ -9,17 +10,12 @@ const AreaView = Backbone.View.extend({
 
   initialize: function () {
     this.model.on('change', this.render, this);
-    this.model.on('destroy', this.remove, this); // remove: Convenience Backbone's function for removing the view from the DOM.
-  }, 
-
-  render: function () {
-    console.log('render');
-    this.$el.html(this.template(this.model.toJSON()));
-    return this;
+    this.model.on('destroy', this.remove, this);
   },
 
-  clear: function() {
-    this.model.clear();
+  render: function () {
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
   }
 
 });

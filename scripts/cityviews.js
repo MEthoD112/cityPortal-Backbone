@@ -10,7 +10,7 @@ const CityView = Backbone.View.extend({
   initialize: function () {
     this.model.on('change', this.render, this);
     this.model.on('destroy', this.remove, this);
-    },
+  },
 
   render: function () {
     this.$el.html(this.template(this.model.toJSON()));
@@ -18,25 +18,25 @@ const CityView = Backbone.View.extend({
   },
 
   events: {
-      "click #i-button"   : "toggleIndustrial",
-      "click #c-button"  : "toggleCriminal",
-      "click #p-button" : "togglePolluted",
-      "click .delete-city"  : "delete"
+    "click #i-button": "toggleIndustrial",
+    "click #c-button": "toggleCriminal",
+    "click #p-button": "togglePolluted",
+    "click .delete-city": "delete"
   },
 
-  toggleIndustrial: function() {
+  toggleIndustrial: function () {
     this.model.toggleIndustrial();
   },
 
-  toggleCriminal: function() {
+  toggleCriminal: function () {
     this.model.toggleCriminal();
   },
 
-  togglePolluted: function() {
+  togglePolluted: function () {
     this.model.togglePolluted();
   },
 
-  delete: function() {
+  delete: function () {
     this.model.clear();
   }
 });

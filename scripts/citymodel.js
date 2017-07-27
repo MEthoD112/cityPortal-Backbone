@@ -1,27 +1,38 @@
 import { AreasList } from './areacollection';
+import { _ } from 'underscore';
 
 const CityModel = Backbone.Model.extend({
 
-    defaults: function() {
-      return  {
+    defaults: function () {
+        return {
             id: this.id,
             name: "Some city",
             country: 'Some country',
             isIndustrial: true,
             isCriminal: false,
             isPolluted: false
-      }
+        }
     },
 
     initialize: function () {
-        this.set('cityAreas', new AreasList());
+        _.defaults(this.attributes, {
+            cityAreas: new AreasList()
+        });
         this.get('cityAreas').on('change', this.cityAreasChange, this);
     },
 
-    cityAreasChange: function(model) {
+    parse: function (response) {
+        if (_.has(response, "cityAreas")) {
+            this.attributes.cityAreas = new AreasList(response.cityAreas, { parse: true });
+            delete response.cityAreas;
+        }
+        return response;
+    },
+
+    cityAreasChange: function (model) {
         this.trigger('cityAreas:change', this, model);
     },
-    
+
     toggleIndustrial: function () {
         this.save({ isIndustrial: !this.get("isIndustrial") });
     },
