@@ -12,8 +12,6 @@
 </head>
 
 <body>
-    <button type="button" class="btn btn-info load-data btn-sm" id="load-data">Load test data</button>
-
     <!-- Container for search, filter and buttons -->
     <div id="wrapper" class="wrapper">
         <div class="button-wrapper">
@@ -135,7 +133,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="save-area">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="save-area">Save changes</button>
                 </div>
             </div>
         </div>
@@ -149,7 +147,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">Add new city</h4>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
                     <span id="city-error" class="city-error"></span>
                 </div>
                 <div class="modal-body" id="modal-city">
@@ -199,15 +197,15 @@
                     <%= '#collapse' + id %>></div>
                 <div class="panel-heading" role="tab" id="headingOne">
                     <button class="delete-city" data-id=<%= id %>></button>
-                    <button class="edit-city" data-id=<%= id %> data-target="#myModal" data-toggle="modal"></button>
+                    <button class="edit-city" data-id=<%= id %>></button>
                     <a>
                         <%= name %>
                     </a>
-                    <div class="areas"><span id=<%= id + 'areas' %> > <%= id %> </span></div>
+                    <div class="areas"><span id=<%= id + 'areas' %> ></span></div>
                     <div class="marks">
-                        <button id="i-button" data-id=<%= id %> class="attributes" <%= isIndustrial ? 'style="background:green"' : 'style="background:red"' %> >I</button>
-                        <button id="c-button" data-id=<%= id %> class="attributes" <%= isCriminal ? 'style="background:green"' : 'style="background:red"' %> >C</button>
-                        <button id="p-button" data-id=<%= id %> class="attributes" <%= isPolluted ? 'style="background:green"' : 'style="background:red"' %> >P</button>
+                        <button id="i-button" class="attributes" <%= isIndustrial ? 'style="background:#4ee321"' : 'style="background:#f39846"' %> >I</button>
+                        <button id="c-button" class="attributes" <%= isCriminal ? 'style="background:#4ee321"' : 'style="background:#f39846"' %> >C</button>
+                        <button id="p-button" class="attributes" <%= isPolluted ? 'style="background:#4ee321"' : 'style="background:#f39846"' %> >P</button>
                     </div>
                 </div>
                 <div id=<%='collapse' + id %> class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
@@ -225,10 +223,10 @@
     <script type="text/template" id="area-template">
         <div class="areasdown">
             <button class="delete-area" data-id=<%= id %>></button>
-            <button class="edit-area" data-target="#areaModal" data-toggle="modal"></button>
+            <button class="edit-area" data-id=<%= id %> data-target="#areaModal" data-toggle="modal"></button>
             <span class="areadown-name"> <%= name %> </span>
             <span class="description"> <%= description %> </span>
-            <span class="citizenamount"> <%= citizenAmount %> </span>
+            <span class="citizenamount"> <%= citizenAmount + ' people' %> </span>
         </div>
     </script>
 </body>

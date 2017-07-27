@@ -37,6 +37,8 @@ const CityView = Backbone.View.extend({
   },
 
   delete: function () {
+    const id = '#' + this.model.get('id') + 'option';
+    $(id).remove();
     this.model.clear();
   }
 });

@@ -16,8 +16,7 @@ const constants = {
     alertNoCities: 'No such city in database, use dropdown menu!!!',
     alertNoCountries: 'No such country in database, use dropdown menu!!!',
     alertNoCitiesWithAttr: 'No cities with such attributes!!!',
-    alertNoAreasWithSuchCitizens: 'No areas with such number of citizens!!!',
-    alertForAreaFilter: 'Insert correct number of citizens!!!'
+    alertNoAreasWithSuchCitizens: 'No areas with such number of citizens!!!'
 };
 
 export { constants };
