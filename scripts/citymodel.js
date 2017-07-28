@@ -1,5 +1,7 @@
 import { AreasList } from './areacollection';
 import { _ } from 'underscore';
+import { AreaView } from './areaview';
+import { app } from './app';
 
 const CityModel = Backbone.Model.extend({
 
@@ -18,7 +20,6 @@ const CityModel = Backbone.Model.extend({
         _.defaults(this.attributes, {
             cityAreas: new AreasList()
         });
-        this.get('cityAreas').on('change', this.cityAreasChange, this);
     },
 
     parse: function (response) {
@@ -29,24 +30,35 @@ const CityModel = Backbone.Model.extend({
         return response;
     },
 
-    cityAreasChange: function (model) {
-        this.trigger('cityAreas:change', this, model);
-    },
-
     toggleIndustrial: function () {
         this.save({ isIndustrial: !this.get("isIndustrial") });
+        this.addAllAreasAndInitAreasList();
     },
 
     toggleCriminal: function () {
         this.save({ isCriminal: !this.get("isCriminal") });
+        this.addAllAreasAndInitAreasList();
     },
 
     togglePolluted: function () {
         this.save({ isPolluted: !this.get("isPolluted") });
+        this.addAllAreasAndInitAreasList();
     },
 
     clear: function () {
         this.destroy();
+    },
+
+    addArea: function (model) {
+        const view = new AreaView({ model: model });
+        const id = '#areas' + this.idCity;
+        $(id).append(view.render().el);
+    },
+
+    addAllAreasAndInitAreasList: function () {
+        this.idCity = this.get('id');
+        this.get('cityAreas').each(this.addArea, this);
+        app.initAreasList(this);
     }
 });
 

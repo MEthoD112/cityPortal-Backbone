@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { _ } from 'underscore';
+const backboneDeepClone = require('backbonedeepclone');
 
 import { CityModel } from './citymodel';
 import { CityView } from './cityviews';
@@ -14,32 +15,39 @@ const AppView = Backbone.View.extend({
   el: "body",
 
   initialize: function () {
-    var self = this;
+    this.mainContainer = this.$('#cities')
     this.inputCity = this.$('#addnewcity');
     this.inputCountry = this.$('#addnewcountry');
     this.isIndustrial = this.$('#i');
     this.isCriminal = this.$('#c');
     this.isPolluted = this.$('#p');
-
     this.inputArea = this.$('#areaname');
     this.inputDescription = this.$('#areadescription');
     this.inputCitizenAmount = this.$('#areacitizens');
-
     this.saveCity = this.$('#save-new-city');
     this.saveArea = this.$('#save-area');
     this.errorCity = this.$('#city-error');
     this.errorArea = this.$('#area-error');
+    this.errorCountry = this.$('#countries-error');
+    this.errorAttr = this.$('#atrributes-error');
+    this.errorCitizen = this.$('#citizens-error');
     this.cityModal = this.$('#myModal');
     this.areaModal = this.$('#areaModal');
     this.cityModalLabel = this.$('#myModalLabel');
     this.areaModalLabel = this.$('#myModalLabelForEdit');
     this.citiesList = this.$('#cities-list');
+    this.countriesList = this.$('#countries-list');
+    this.inputSearchCity = this.$('#input-search-cities');
+    this.inputSearchCountry = this.$('#input-search-countries');
+    this.dropDownButton = this.$('#dropdown-menu');
+    this.isIndustrial = this.$('#i-filter');
+    this.isCriminal = this.$('#c-filter');
+    this.isPolluted = this.$('#p-filter');
+    this.inputMaxCitizens = this.$('#max-value-citizens');
+    this.inputMinCitizens = this.$('#min-value-citizens');
 
     citiesCollection.on('add', this.addAll, this);
     citiesCollection.on('reset', this.addAll, this);
-    citiesCollection.on('cityAreas:change', function() {
-      console.log('Change Event');
-     });
     citiesCollection.fetch();
   },
 
@@ -50,7 +58,111 @@ const AppView = Backbone.View.extend({
     'click .edit-city': 'openModalForEditCity',
     'click .edit-area': 'openModalForEditArea',
     'click #add-new-city-button': 'openModalForAddCity',
-    'click #add-new-area': 'openModalForAddArea'
+    'click #add-new-area': 'openModalForAddArea',
+    'click #search-button-cities': 'renderFilteredCity',
+    'click #reset-button-cities': 'resetFilter',
+    'click #search-country-button': 'renderFilteredCitiesByCountry',
+    'click #search-attributes-button': 'renderFilteredCitiesByAttr',
+    'click #search-by-citizens': 'renderFilteredCitiesByCitizens'
+  },
+
+  renderFilteredCitiesByCitizens: function () {
+    const min = this.inputMinCitizens.val();
+    const max = this.inputMaxCitizens.val();
+    const cities = this.filterByCitizens(min, max);
+    if (!cities.length) {
+      this.errorCitizen.html(constants.alertNoAreasWithSuchCitizens);
+      return;
+    }
+    this.renderFiltered(cities);
+  },
+
+  filterByCitizens: function (min, max) {
+    const clonedCollection = backboneDeepClone(citiesCollection);
+    const filteredCollection = clonedCollection.filter((city) => {
+      const col = city.get('cityAreas').filter((area) => {
+        if (area.get('citizenAmount') >= min && area.get('citizenAmount') <= max) {
+          return area;
+        }
+      });
+      city.get('cityAreas').set(col);
+      return city;
+    });
+    return filteredCollection.filter((city) => {
+      if (city.get('cityAreas').length) {
+        return city;
+      }
+    });
+  },
+
+  renderFilteredCitiesByAttr: function () {
+    const cities = this.filterByAttr();
+    if (!cities.length) {
+      this.errorAttr.html(constants.alertNoCitiesWithAttr);
+      return;
+    }
+    this.renderFiltered(cities);
+  },
+
+  filterByAttr: function () {
+    return citiesCollection.filter((city) => {
+      if (city.get('isIndustrial') + '' === this.isIndustrial.attr('data-act') &&
+        city.get('isCriminal') + '' === this.isCriminal.attr('data-act') &&
+        city.get('isPolluted') + '' === this.isPolluted.attr('data-act')) {
+        return city;
+      }
+    });
+  },
+
+  renderFilteredCitiesByCountry: function () {
+    if (!this.inputSearchCountry.val()) {
+      return;
+    }
+    const city = this.filterByCountry();
+    if (!city.length) {
+      this.inputSearchCountry.val('');
+      this.errorCountry.html(constants.alertNoCountries);
+      return;
+    }
+    this.renderFiltered(city);
+    this.inputSearchCountry.val('');
+  },
+
+  filterByCountry: function () {
+    return citiesCollection.filter((city) => {
+      if (city.get('country') === this.inputSearchCountry.val()) {
+        return city;
+      }
+    });
+  },
+
+  resetFilter: function () {
+    this.mainContainer.empty();
+    this.addAll();
+  },
+
+  renderFilteredCity: function () {
+    if (!this.inputSearchCity.val()) {
+      return;
+    }
+    const city = this.filterByCity();
+    if (!city.length) {
+      this.inputSearchCity.val('');
+      this.mainContainer.empty();
+      this.mainContainer.html(`<h3 class="city-error">${constants.alertNoCities}</h3>`);
+      return;
+    }
+
+    this.renderFiltered(city);
+    this.inputSearchCity.val('');
+  },
+
+  filterByCity: function () {
+    return citiesCollection.filter((city) => {
+      if (city.get('name') === this.inputSearchCity.val()) {
+        return city;
+      }
+    });
   },
 
   openModalForAddArea: function (event) {
@@ -183,8 +295,9 @@ const AppView = Backbone.View.extend({
       this.initAreasList(model);
       this.citiesList.empty();
       this.initCitiesSearch(citiesCollection);
+      this.countriesList.empty();
+      this.initCountriesList(citiesCollection);
     }
-
     if (this.saveCity.attr('data-mode') === 'edit') {
       if (!this.validateCity('edit')) {
         return;
@@ -194,27 +307,40 @@ const AppView = Backbone.View.extend({
         country: this.inputCountry.val(),
         isIndustrial: this.isIndustrial.attr('data-act') === 'true' ? true : false,
         isCriminal: this.isCriminal.attr('data-act') === 'true' ? true : false,
-        isPolluted: this.isPolluted.attr('data-act') === 'true' ? true : false
+        isPolluted: this.isPolluted.attr('data-act') === 'true' ? true : false,
+        cityAreas: citiesCollection.get(this.id).get('cityAreas')
       });
+      citiesCollection.get(this.id).get('cityAreas').each(this.addAllAreas, this);
+      citiesCollection.each(this.initAreasList, this);
       this.citiesList.empty();
       this.initCitiesSearch(citiesCollection);
+      this.countriesList.empty();
+      this.initCountriesList(citiesCollection);
       citiesCollection.get(this.id).save();
       this.cityModal.modal('hide');
       this.errorCity.html('');
     }
   },
 
+  addAllAreas: function (model) {
+    const view = new AreaView({ model: model });
+    const id = '#areas' + this.id;
+    $(id).append(view.render().el);
+  },
+
   addOne: function (city) {
     const view = new CityView({ model: city });
-    $('#cities').append(view.render().el);
+    this.mainContainer.append(view.render().el);
   },
 
   addAll: function () {
-    this.$('#cities').html('');
+    this.mainContainer.html('');
     this.citiesList.empty();
+    this.countriesList.empty();
     citiesCollection.each(this.addOne, this);
     citiesCollection.each(this.initAreasList, this);
     this.initCitiesSearch(citiesCollection);
+    this.initCountriesList(citiesCollection);
     for (let i = 0; i < citiesCollection.models.length; i++) {
       for (let j = 0; j < citiesCollection.models[i].get('cityAreas').models.length; j++) {
         this.addOneArea(citiesCollection.models[i].get('cityAreas').models[j], citiesCollection.models[i].attributes.id);
@@ -310,6 +436,29 @@ const AppView = Backbone.View.extend({
       const id = item.id + 'option';
       this.citiesList.append(option.attr('id', id));
     });
+  },
+
+  initCountriesList: function (collection) {
+    const arr = [];
+    collection.toJSON().forEach((item) => {
+      if (arr.indexOf(item.country) === -1) {
+        arr.push(item.country);
+        const option = $('<option>').val(item.country);
+        const id = item.id + 'country';
+        this.countriesList.append(option.attr('id', id));
+      }
+    });
+  },
+
+  renderFiltered: function (collection) {
+    this.mainContainer.empty();
+    collection.forEach((item) => {
+      this.addOne(item);
+      this.id = item.get('id');
+      item.get('cityAreas').each(this.addAllAreas, this);
+      this.initAreasList(item);
+    });
+    this.dropDownButton.removeClass('open');
   }
 });
 

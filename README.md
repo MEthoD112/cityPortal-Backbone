@@ -1,7 +1,8 @@
 # cityPortal App
-https://rawgit.com/MEthoD112/cityPortal/master/index.html
+https://rawgit.com/MEthoD112/cityPortal-Backbone/master/index.html
 
 ### Tech stack:
+ * Backbone
  * BootStrap
  * Webpack
  * Babel

@@ -8,8 +8,9 @@ import { _ } from 'underscore';
 import { Collection, Model, View } from 'backbone';
 
 import { AppView } from './application';
-import { ToggleAttrModal } from './toggleattrinmodal';
+import { FilterModal } from './filtermodal';
 
 const app = new AppView();
-const toggleModal = new ToggleAttrModal();
+const filterModal = new FilterModal();
 
+export { app };
