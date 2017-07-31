@@ -1,5 +1,6 @@
 import { _ } from 'underscore';
 import $ from 'jquery';
+import { CityModel } from './citymodel';
 
 const CityView = Backbone.View.extend({
 
@@ -18,10 +19,10 @@ const CityView = Backbone.View.extend({
   },
 
   events: {
-    "click #i-button": "toggleIndustrial",
-    "click #c-button": "toggleCriminal",
-    "click #p-button": "togglePolluted",
-    "click .delete-city": "delete"
+    'click #i-button': 'toggleIndustrial',
+    'click #c-button': 'toggleCriminal',
+    'click #p-button': 'togglePolluted',
+    'click .delete-city': 'delete'
   },
 
   toggleIndustrial: function () {

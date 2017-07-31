@@ -8,7 +8,7 @@ const CityModel = Backbone.Model.extend({
     defaults: function () {
         return {
             id: this.id,
-            name: "Some city",
+            name: 'Some city',
             country: 'Some country',
             isIndustrial: true,
             isCriminal: false,
@@ -23,25 +23,25 @@ const CityModel = Backbone.Model.extend({
     },
 
     parse: function (response) {
-        if (_.has(response, "cityAreas")) {
-            this.attributes.cityAreas = new AreasList(response.cityAreas, { parse: true });
+        if (_.has(response, 'cityAreas')) {
+            this.attributes.cityAreas = new AreasList(response.cityAreas);
             delete response.cityAreas;
         }
         return response;
     },
 
     toggleIndustrial: function () {
-        this.save({ isIndustrial: !this.get("isIndustrial") });
+        this.save({ isIndustrial: !this.get('isIndustrial') });
         this.addAllAreasAndInitAreasList();
     },
 
     toggleCriminal: function () {
-        this.save({ isCriminal: !this.get("isCriminal") });
+        this.save({ isCriminal: !this.get('isCriminal') });
         this.addAllAreasAndInitAreasList();
     },
 
     togglePolluted: function () {
-        this.save({ isPolluted: !this.get("isPolluted") });
+        this.save({ isPolluted: !this.get('isPolluted') });
         this.addAllAreasAndInitAreasList();
     },
 

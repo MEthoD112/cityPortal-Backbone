@@ -6,7 +6,7 @@ const CitiesList = Backbone.Collection.extend({
 
     model: CityModel,
 
-    localStorage: new Backbone.LocalStorage("cities")
+    localStorage: new Backbone.LocalStorage('cities')
 });
 
 const citiesCollection = new CitiesList();

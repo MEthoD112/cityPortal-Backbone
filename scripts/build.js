@@ -16329,8 +16329,6 @@ var _jquery = __webpack_require__(46);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _underscore = __webpack_require__(28);
-
 var _backbone = __webpack_require__(62);
 
 var _application = __webpack_require__(126);
@@ -16375,7 +16373,7 @@ var AreasList = Backbone.Collection.extend({
 
     model: _areamodel.AreaModel,
 
-    localStorage: new Backbone.LocalStorage("areas")
+    localStorage: new Backbone.LocalStorage('areas')
 });
 
 exports.AreasList = AreasList;
@@ -16399,7 +16397,7 @@ var AreaModel = Backbone.Model.extend({
     defaults: function defaults() {
         return {
             id: _underscore._.uniqueId(),
-            name: "Some Area",
+            name: 'Some Area',
             description: 'Some description',
             citizenAmount: 1
         };
@@ -16471,7 +16469,7 @@ var CitiesList = Backbone.Collection.extend({
 
     model: _citymodel.CityModel,
 
-    localStorage: new Backbone.LocalStorage("cities")
+    localStorage: new Backbone.LocalStorage('cities')
 });
 
 var citiesCollection = new CitiesList();
@@ -16503,7 +16501,7 @@ var CityModel = Backbone.Model.extend({
     defaults: function defaults() {
         return {
             id: this.id,
-            name: "Some city",
+            name: 'Some city',
             country: 'Some country',
             isIndustrial: true,
             isCriminal: false,
@@ -16518,25 +16516,25 @@ var CityModel = Backbone.Model.extend({
     },
 
     parse: function parse(response) {
-        if (_underscore._.has(response, "cityAreas")) {
-            this.attributes.cityAreas = new _areacollection.AreasList(response.cityAreas, { parse: true });
+        if (_underscore._.has(response, 'cityAreas')) {
+            this.attributes.cityAreas = new _areacollection.AreasList(response.cityAreas);
             delete response.cityAreas;
         }
         return response;
     },
 
     toggleIndustrial: function toggleIndustrial() {
-        this.save({ isIndustrial: !this.get("isIndustrial") });
+        this.save({ isIndustrial: !this.get('isIndustrial') });
         this.addAllAreasAndInitAreasList();
     },
 
     toggleCriminal: function toggleCriminal() {
-        this.save({ isCriminal: !this.get("isCriminal") });
+        this.save({ isCriminal: !this.get('isCriminal') });
         this.addAllAreasAndInitAreasList();
     },
 
     togglePolluted: function togglePolluted() {
-        this.save({ isPolluted: !this.get("isPolluted") });
+        this.save({ isPolluted: !this.get('isPolluted') });
         this.addAllAreasAndInitAreasList();
     },
 
@@ -17990,9 +17988,6 @@ var AppView = Backbone.View.extend({
     this.mainContainer = this.$('#cities');
     this.inputCity = this.$('#addnewcity');
     this.inputCountry = this.$('#addnewcountry');
-    this.isIndustrial = this.$('#i');
-    this.isCriminal = this.$('#c');
-    this.isPolluted = this.$('#p');
     this.inputArea = this.$('#areaname');
     this.inputDescription = this.$('#areadescription');
     this.inputCitizenAmount = this.$('#areacitizens');
@@ -18038,6 +18033,7 @@ var AppView = Backbone.View.extend({
     'click #search-by-citizens': 'renderFilteredCitiesByCitizens'
   },
 
+  // Render filtered collection by citizen amount
   renderFilteredCitiesByCitizens: function renderFilteredCitiesByCitizens() {
     var min = this.inputMinCitizens.val();
     var max = this.inputMaxCitizens.val();
@@ -18049,8 +18045,13 @@ var AppView = Backbone.View.extend({
     this.renderFiltered(cities);
   },
 
+  // Filter collection by citizen amount
   filterByCitizens: function filterByCitizens(min, max) {
     var clonedCollection = backboneDeepClone(_citycollections.citiesCollection);
+    clonedCollection.__proto__ = _citycollections.citiesCollection.__proto__;
+    for (var i = 0; i < clonedCollection.models.length; i++) {
+      clonedCollection.models[i].__proto__ = _citycollections.citiesCollection.models[0].__proto__;
+    }
     var filteredCollection = clonedCollection.filter(function (city) {
       var col = city.get('cityAreas').filter(function (area) {
         if (area.get('citizenAmount') >= min && area.get('citizenAmount') <= max) {
@@ -18067,6 +18068,7 @@ var AppView = Backbone.View.extend({
     });
   },
 
+  // Render filtered collection by attributes
   renderFilteredCitiesByAttr: function renderFilteredCitiesByAttr() {
     var cities = this.filterByAttr();
     if (!cities.length) {
@@ -18076,6 +18078,7 @@ var AppView = Backbone.View.extend({
     this.renderFiltered(cities);
   },
 
+  // Filter collection by attributes
   filterByAttr: function filterByAttr() {
     var _this = this;
 
@@ -18086,6 +18089,7 @@ var AppView = Backbone.View.extend({
     });
   },
 
+  // Render filtered collection by country
   renderFilteredCitiesByCountry: function renderFilteredCitiesByCountry() {
     if (!this.inputSearchCountry.val()) {
       return;
@@ -18100,6 +18104,7 @@ var AppView = Backbone.View.extend({
     this.inputSearchCountry.val('');
   },
 
+  // Filter collection by country
   filterByCountry: function filterByCountry() {
     var _this2 = this;
 
@@ -18110,11 +18115,13 @@ var AppView = Backbone.View.extend({
     });
   },
 
+  // Reset filter
   resetFilter: function resetFilter() {
     this.mainContainer.empty();
     this.addAll();
   },
 
+  // Render filtered collection by city
   renderFilteredCity: function renderFilteredCity() {
     if (!this.inputSearchCity.val()) {
       return;
@@ -18131,6 +18138,7 @@ var AppView = Backbone.View.extend({
     this.inputSearchCity.val('');
   },
 
+  // Filter collection by city
   filterByCity: function filterByCity() {
     var _this3 = this;
 
@@ -18141,6 +18149,7 @@ var AppView = Backbone.View.extend({
     });
   },
 
+  // Open modal window for adding area
   openModalForAddArea: function openModalForAddArea(event) {
     this.cityId = (0, _jquery2.default)(event.target).attr('data-id');
     this.saveArea.attr('data-mode', 'add');
@@ -18151,13 +18160,14 @@ var AppView = Backbone.View.extend({
     this.inputCitizenAmount.val('');
   },
 
+  // Open modal window for edditin area
   openModalForEditArea: function openModalForEditArea(event) {
     this.areaId = (0, _jquery2.default)(event.target).attr('data-id');
     this.cityId = (0, _jquery2.default)(event.target).parent().parent().parent().attr('id').slice(5);
     this.saveArea.attr('data-mode', 'edit');
     this.areaModalLabel.html(_constants.constants.editArea);
     this.view = (0, _jquery2.default)(event.target).parent().parent();
-    this.errorArea.html();
+    this.errorArea.html('');
     var model = _citycollections.citiesCollection.get(this.cityId).get('cityAreas').get(this.areaId);
     this.areaName = model.get('name');
     this.inputArea.val(model.get('name'));
@@ -18165,20 +18175,22 @@ var AppView = Backbone.View.extend({
     this.inputCitizenAmount.val(model.get('citizenAmount'));
   },
 
+  // Open modal window for adding city
   openModalForAddCity: function openModalForAddCity() {
     this.cityModalLabel.html(_constants.constants.addCity);
     this.inputCity.val('');
     this.inputCountry.val('');
     this.errorCity.html('');
-    this.isIndustrial.attr('data-act', 'true');
-    this.isCriminal.attr('data-act', 'false');
-    this.isPolluted.attr('data-act', 'false');
-    this.isIndustrial.css('background', _constants.constants.activeColor);
-    this.isCriminal.css('background', _constants.constants.noActiveColor);
-    this.isPolluted.css('background', _constants.constants.noActiveColor);
+    this.$('#i').attr('data-act', 'true');
+    this.$('#c').attr('data-act', 'false');
+    this.$('#p').attr('data-act', 'false');
+    this.$('#i').css('background', _constants.constants.activeColor);
+    this.$('#c').css('background', _constants.constants.noActiveColor);
+    this.$('#p').css('background', _constants.constants.noActiveColor);
     this.saveCity.attr('data-mode', 'add');
   },
 
+  // Open modal window for additin city
   openModalForEditCity: function openModalForEditCity(event) {
     var cityId = (0, _jquery2.default)(event.target).attr('data-id');
     this.cityModal.modal('show');
@@ -18193,21 +18205,22 @@ var AppView = Backbone.View.extend({
     var isCriminal = _citycollections.citiesCollection.get(cityId).get('isCriminal');
     var isPolluted = _citycollections.citiesCollection.get(cityId).get('isPolluted');
 
-    this.isIndustrial.attr('data-act', isIndustrial);
-    this.isCriminal.attr('data-act', isCriminal);
-    this.isPolluted.attr('data-act', isPolluted);
+    this.$('#i').attr('data-act', isIndustrial);
+    this.$('#c').attr('data-act', isCriminal);
+    this.$('#p').attr('data-act', isPolluted);
 
     var iColor = isIndustrial ? _constants.constants.activeColor : _constants.constants.noActiveColor;
     var cColor = isCriminal ? _constants.constants.activeColor : _constants.constants.noActiveColor;
     var pColor = isPolluted ? _constants.constants.activeColor : _constants.constants.noActiveColor;
 
-    this.isIndustrial.css('background', iColor);
-    this.isCriminal.css('background', cColor);
-    this.isPolluted.css('background', pColor);
+    this.$('#i').css('background', iColor);
+    this.$('#c').css('background', cColor);
+    this.$('#p').css('background', pColor);
 
     this.saveCity.attr('data-mode', 'edit');
   },
 
+  // Delete area
   deleteArea: function deleteArea(event) {
     this.areaId = event.target.getAttribute('data-id');
     var cityParent = event.target.parentNode.parentNode.parentNode;
@@ -18219,6 +18232,7 @@ var AppView = Backbone.View.extend({
     view.remove();
   },
 
+  // Render created or edited area
   createOrEditArea: function createOrEditArea(event) {
     if (this.saveArea.attr('data-mode') === 'add') {
       if (!this.validateArea()) {
@@ -18253,12 +18267,14 @@ var AppView = Backbone.View.extend({
     }
   },
 
+  // Render one area
   addOneArea: function addOneArea(area, id) {
     var view = new _areaview.AreaView({ model: area });
     var Id = '#areas' + id;
     (0, _jquery2.default)(Id).append(view.render().el);
   },
 
+  // Render created or eddited city
   createOrEditCity: function createOrEditCity() {
     if (this.saveCity.attr('data-mode') === 'add') {
       if (!this.validateCity()) {
@@ -18281,9 +18297,9 @@ var AppView = Backbone.View.extend({
       _citycollections.citiesCollection.get(this.id).set({
         name: this.inputCity.val(),
         country: this.inputCountry.val(),
-        isIndustrial: this.isIndustrial.attr('data-act') === 'true' ? true : false,
-        isCriminal: this.isCriminal.attr('data-act') === 'true' ? true : false,
-        isPolluted: this.isPolluted.attr('data-act') === 'true' ? true : false,
+        isIndustrial: this.$('#i').attr('data-act') === 'true' ? true : false,
+        isCriminal: this.$('#c').attr('data-act') === 'true' ? true : false,
+        isPolluted: this.$('#p').attr('data-act') === 'true' ? true : false,
         cityAreas: _citycollections.citiesCollection.get(this.id).get('cityAreas')
       });
       _citycollections.citiesCollection.get(this.id).get('cityAreas').each(this.addAllAreas, this);
@@ -18298,17 +18314,20 @@ var AppView = Backbone.View.extend({
     }
   },
 
+  // Render all areas for one city
   addAllAreas: function addAllAreas(model) {
     var view = new _areaview.AreaView({ model: model });
     var id = '#areas' + this.id;
     (0, _jquery2.default)(id).append(view.render().el);
   },
 
+  // Render one city
   addOne: function addOne(city) {
     var view = new _cityviews.CityView({ model: city });
     this.mainContainer.append(view.render().el);
   },
 
+  // Render all cities and areas when app starts
   addAll: function addAll() {
     this.mainContainer.html('');
     this.citiesList.empty();
@@ -18324,16 +18343,18 @@ var AppView = Backbone.View.extend({
     }
   },
 
+  // Create new model for city
   createNewCity: function createNewCity() {
     return new _citymodel.CityModel({
       name: this.inputCity.val().trim(),
       country: this.inputCountry.val().trim(),
-      isIndustrial: this.isIndustrial.attr('data-act') === 'true' ? true : false,
-      isCriminal: this.isCriminal.attr('data-act') === 'true' ? true : false,
-      isPolluted: this.isPolluted.attr('data-act') === 'true' ? true : false
+      isIndustrial: this.$('#i').attr('data-act') === 'true' ? true : false,
+      isCriminal: this.$('#c').attr('data-act') === 'true' ? true : false,
+      isPolluted: this.$('#p').attr('data-act') === 'true' ? true : false
     });
   },
 
+  // Create new model for area
   createNewArea: function createNewArea() {
     return new _areamodel.AreaModel({
       name: this.inputArea.val().trim(),
@@ -18342,6 +18363,7 @@ var AppView = Backbone.View.extend({
     });
   },
 
+  // Validate created or eddited city
   validateCity: function validateCity(mode) {
     var _this4 = this;
 
@@ -18369,6 +18391,7 @@ var AppView = Backbone.View.extend({
     return true;
   },
 
+  // Validate created or eddited area
   validateArea: function validateArea(mode) {
     var _this5 = this;
 
@@ -18398,6 +18421,7 @@ var AppView = Backbone.View.extend({
     return true;
   },
 
+  // Rerender areas list for adding, edditin or deleting area
   initAreasList: function initAreasList(model) {
     var areasArr = [];
     model.get('cityAreas').toJSON().forEach(function (item) {
@@ -18408,6 +18432,7 @@ var AppView = Backbone.View.extend({
     (0, _jquery2.default)(id).html(string);
   },
 
+  // Rerender cities list in search datalist
   initCitiesSearch: function initCitiesSearch(collection) {
     var _this6 = this;
 
@@ -18418,6 +18443,7 @@ var AppView = Backbone.View.extend({
     });
   },
 
+  // Rerender countries list in search datalist
   initCountriesList: function initCountriesList(collection) {
     var _this7 = this;
 
@@ -18432,6 +18458,7 @@ var AppView = Backbone.View.extend({
     });
   },
 
+  // Render filtered collection
   renderFiltered: function renderFiltered(collection) {
     var _this8 = this;
 
@@ -18466,6 +18493,8 @@ var _jquery = __webpack_require__(46);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _citymodel = __webpack_require__(94);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CityView = Backbone.View.extend({
@@ -18485,10 +18514,10 @@ var CityView = Backbone.View.extend({
   },
 
   events: {
-    "click #i-button": "toggleIndustrial",
-    "click #c-button": "toggleCriminal",
-    "click #p-button": "togglePolluted",
-    "click .delete-city": "delete"
+    'click #i-button': 'toggleIndustrial',
+    'click #c-button': 'toggleCriminal',
+    'click #p-button': 'togglePolluted',
+    'click .delete-city': 'delete'
   },
 
   toggleIndustrial: function toggleIndustrial() {
@@ -18559,20 +18588,23 @@ var FilterModal = exports.FilterModal = function () {
         this.isCriminalAttr = (0, _jquery2.default)('#c-filter');
         this.isPollutedAttr = (0, _jquery2.default)('#p-filter');
 
+        // Event for toggling attributes in city modal window
         this.cityModal.on('click', function (event) {
             var id = event.target.id;
             if (id === 'c' || id === 'p' || id === 'i') {
-                _this.toogleColor(event.target);
+                _this.toggleColor(event.target);
             }
         });
 
+        // Event for toggling attributes in filter window
         this.filterAttr.on('click', function (event) {
             var id = event.target.id;
             if (id === 'c-filter' || id === 'p-filter' || id === 'i-filter') {
-                _this.toogleColor(event.target);
+                _this.toggleColor(event.target);
             }
         });
 
+        // Event for open filter window
         this.dropDownButton.on('click', function () {
             _this.countriesError.html('');
             _this.inputSearchCountry.val('');
@@ -18590,9 +18622,12 @@ var FilterModal = exports.FilterModal = function () {
         });
     }
 
+    // Toggle attributes
+
+
     _createClass(FilterModal, [{
-        key: 'toogleColor',
-        value: function toogleColor(target) {
+        key: 'toggleColor',
+        value: function toggleColor(target) {
             if (target.getAttribute('data-act') === 'true') {
                 target.style.background = _constants.constants.noActiveColor;
                 target.setAttribute('data-act', 'false');
@@ -18601,6 +18636,9 @@ var FilterModal = exports.FilterModal = function () {
                 target.setAttribute('data-act', 'true');
             }
         }
+
+        // Find max and min value of citizens
+
     }, {
         key: 'findMinAndMaxValuesOfCitizens',
         value: function findMinAndMaxValuesOfCitizens(collection) {

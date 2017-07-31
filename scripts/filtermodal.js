@@ -17,20 +17,23 @@ export class FilterModal {
         this.isCriminalAttr = $('#c-filter');
         this.isPollutedAttr = $('#p-filter');
 
+        // Event for toggling attributes in city modal window
         this.cityModal.on('click', (event) => {
             const id = event.target.id;
             if (id === 'c' || id === 'p' || id === 'i') {
-                this.toogleColor(event.target);
+                this.toggleColor(event.target);
             }
         });
 
+        // Event for toggling attributes in filter window
         this.filterAttr.on('click', (event) => {
             const id = event.target.id;
             if (id === 'c-filter' || id === 'p-filter' || id === 'i-filter') {
-                this.toogleColor(event.target);
+                this.toggleColor(event.target);
             }
         });
 
+        // Event for open filter window
         this.dropDownButton.on('click', () => {
             this.countriesError.html('');
             this.inputSearchCountry.val('');
@@ -48,7 +51,8 @@ export class FilterModal {
         });
     }
 
-    toogleColor(target) {
+    // Toggle attributes
+    toggleColor(target) {
         if (target.getAttribute('data-act') === 'true') {
             target.style.background = constants.noActiveColor;
             target.setAttribute('data-act', 'false');
@@ -58,6 +62,7 @@ export class FilterModal {
         }
     }
 
+    // Find max and min value of citizens
     findMinAndMaxValuesOfCitizens(collection) {
         let arr = [];
         collection.each((item) => {
